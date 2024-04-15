@@ -1,8 +1,8 @@
-version: '3.8'
+version: '3.7'
 services:
 
   postgres:
-    image: postgres:14.2-alpine
+    image: postgres:12.2-alpine
     container_name: postgres
     ports:
       - 5432:5432
@@ -30,4 +30,3 @@ services:
       - ./docker/pgadmin:/var/lib/pgadmin
     depends_on:
       - postgres
-    user: root
