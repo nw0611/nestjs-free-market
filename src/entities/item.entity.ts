@@ -24,6 +24,6 @@ export class Item {
   @Column()
   updatedAt: string;
 
-  @Column()
-  userId: string;
+  // @Column()
+  // userId: string;
 }

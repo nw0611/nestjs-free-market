@@ -13,13 +13,14 @@ import {
 import { ItemsService } from './items.service';
 import { Item } from '../entities/item.entity';
 import { CreateItemDto } from './create-item.dto';
-import { Role } from '../auth/decorator/role.decorator';
-import { UserStatus } from '../auth/user-status.enum';
+// import { Role } from '../auth/decorator/role.decorator';
+// import { UserStatus } from '../auth/user-status.enum';
 
 @Controller('items')
 @UseInterceptors(ClassSerializerInterceptor)
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
+
   @Get()
   async findAll(): Promise<Item[]> {
     return await this.itemsService.findAll();
@@ -31,10 +32,7 @@ export class ItemsController {
   }
 
   @Post()
-  @Role(UserStatus.PREMIUM)
-  async create(
-    @Body() createItemDto: CreateItemDto,
-  ): Promise<Item> {
+  async create(@Body() createItemDto: CreateItemDto): Promise<Item> {
     return await this.itemsService.create(createItemDto);
   }
 
