@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,7 +7,6 @@ import { CreateItemDto } from './create-item.dto';
 import { ItemStatus } from './item-status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
 
 @Injectable()
 export class ItemsService {
@@ -20,14 +18,14 @@ export class ItemsService {
   }
 
   async findById(id: string): Promise<Item> {
-    const found = await this.itemRepository.findOneBy({ id });
+    const found = await this.itemRepository.findOne({ id });
     if (!found) {
       throw new NotFoundException();
     }
     return found;
   }
 
-  async create(createItemDto: CreateItemDto, user: User): Promise<Item> {
+  async create(createItemDto: CreateItemDto): Promise<Item> {
     const { name, price, description } = createItemDto;
     const item = this.itemRepository.create({
       name,
@@ -36,18 +34,14 @@ export class ItemsService {
       status: ItemStatus.ON_SALE,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      user,
     });
 
     await this.itemRepository.save(item);
     return item;
   }
 
-  async updateStatus(id: string, user: User): Promise<Item> {
+  async updateStatus(id: string): Promise<Item> {
     const item = await this.findById(id);
-    if (item.userId === user.id) {
-      throw new BadRequestException('自身の商品を購入することはできません');
-    }
     item.status = ItemStatus.SOLD_OUT;
     item.updatedAt = new Date().toISOString();
     const updatedItem = await this.itemRepository.update(id, {
@@ -60,11 +54,8 @@ export class ItemsService {
     return item;
   }
 
-  async delete(id: string, user: User): Promise<void> {
+  async delete(id: string): Promise<void> {
     const item = await this.findById(id);
-    if (item.userId !== user.id) {
-      throw new BadRequestException('他人の商品を削除することはできません');
-    }
     const response = await this.itemRepository.delete({ id });
     if (response.affected !== 1) {
       throw new NotFoundException(`${id}のデータを削除できませんでした`);

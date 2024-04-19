@@ -38,3 +38,4 @@ lerna-debug.log*
 docker/postgres/*
 docker/pgadmin/*
 !docker/postgres/init.d
+src/nestjs-free-market.code-workspace
